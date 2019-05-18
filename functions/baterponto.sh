@@ -40,7 +40,7 @@ baterponto.almoco() {
 	flag=almoco
 	log=${BASEDIR}/logs/${message_from_id}
 	
-	if [[ ! -f $log/$file ]];
+	if [[ ! -f $log/$file ]]; then
 		message="Entrada ainda nao registrada. Registre a Entrada primeiro"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
