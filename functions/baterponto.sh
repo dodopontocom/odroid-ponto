@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 
-source ${BASEDIR}/iscreated.sh
+source ${BASEDIR}/functions/iscreated.sh
 #source random.sh
 
 #1 hour -> 1x60x60 seconds
