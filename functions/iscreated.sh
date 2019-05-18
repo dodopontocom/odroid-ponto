@@ -9,7 +9,7 @@ iscreated.helper() {
 	case ${type} in
 			'-d')
 				if [[ ! -d $var ]]; then
-					mkdir $var
+					mkdir -p $var
 				fi
 			;;
 			'-f')
