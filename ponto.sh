@@ -5,8 +5,8 @@ sleep 10
 # Importando API
 BASEDIR=$(dirname $0)
 source ${BASEDIR}/ShellBot.sh
-source ~/odroid-functions/start.sh
-source ~/odroid-functions/baterponto.sh
+source ${BASEDIR}/functions/start.sh
+source ${BASEDIR}/functions/baterponto.sh
 
 ######################################################################################
 #source <(cat ${BASEDIR}/functions/*.sh)
