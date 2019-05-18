@@ -10,19 +10,28 @@ eight_hours_in_seconds=28800
 four_hours_in_seconds=$(echo $((eight_hours_in_seconds/2)))
 
 baterponto.entrada() {
-	local work_day_start_sec reply_user estimate log file message flag weekday day verify
+	local work_day_start_sec reply_user estimate log file message flag flag2 weekday day verify verify2
 	weekday=$(date +%a)
 	day=$(date +%Y%m%d)
 	file=${day}.csv
 	flag=entrada
+	flag2=2entrada
 	log=${BASEDIR}/logs/${message_from_id}
 	iscreated.helper -d $log
 	iscreated.helper -f $log/$file
-	verify=$(cat $log/$file | grep $day | grep $flag | cut -d',' -f4)
+	verify=$(cat $log/$file | grep $day | grep ,$flag | cut -d',' -f4)
+	verify2=$(cat $log/$file | grep $day | grep ,$flag2 | cut -d',' -f4)
 
-	if [[ ! -z $verify ]]; then
+	if [[ ! -z $verify ]] && [[ -z $verify2 ]]; then
 		message="Entrada de hoje foi registrada as ${verify}"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+	elif [[ ! -z $verify2 ]]; then
+		message="Registrando horário da Segunda entrada -> "
+		work_day_start_sec="$(date --date="now" +%s)"
+		reply_user=$(date --date="now" +'%H:%M')
+		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
+
+		echo "$day,$weekday,$work_day_start_sec,$reply_user,$flag2" >> $log/$file
 	else
 		message="Registrando horário de entrada -> "
 		work_day_start_sec="$(date --date="now" +%s)"
