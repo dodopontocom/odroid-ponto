@@ -26,7 +26,7 @@ baterponto.entrada() {
 	if [[ ! -z $verify ]] && [[ -z $verify_saida ]]; then
 		message="Entrada de hoje foi registrada as ${verify}"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
-	elif [[ ! -z $verify_saida ]] && [[ ! -z $flag2 ]]; then
+	elif [[ ! -z $verify_saida ]] && [[ ! -z $verify_entrada2 ]]; then
 		message="Registrando horário da Segunda entrada -> "
 		work_day_start_sec="$(date --date="now" +%s)"
 		reply_user=$(date --date="now" +'%H:%M')
