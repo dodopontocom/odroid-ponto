@@ -21,11 +21,12 @@ baterponto.entrada() {
 	iscreated.helper -f $log/$file
 	verify=$(cat $log/$file | grep $day | grep ,$flag | cut -d',' -f4)
 	verify_saida=$(cat $log/$file | grep $day | grep ,saida | cut -d',' -f4)
+	verify_entrada2=$(cat $log/$file | grep $day | grep ,$flag2 | cut -d',' -f4)
 
 	if [[ ! -z $verify ]] && [[ -z $verify_saida ]]; then
 		message="Entrada de hoje foi registrada as ${verify}"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
-	elif [[ ! -z $verify_saida ]]; then
+	elif [[ ! -z $verify_saida ]] && [[ ! -z $flag2 ]]; then
 		message="Registrando horário da Segunda entrada -> "
 		work_day_start_sec="$(date --date="now" +%s)"
 		reply_user=$(date --date="now" +'%H:%M')
