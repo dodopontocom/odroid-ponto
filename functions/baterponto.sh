@@ -33,6 +33,9 @@ baterponto.entrada() {
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
 
 		echo "$day,$weekday,$work_day_start_sec,$reply_user,$flag2" >> $log/$file
+	elif [[ ! -z $verify_entrada2 ]]; then
+		message=" Segunda entrada de hoje foi registrada as ${verify_entrada2}"
+		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
 		message="Registrando horário de entrada -> "
 		work_day_start_sec="$(date --date="now" +%s)"
