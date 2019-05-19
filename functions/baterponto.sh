@@ -2,7 +2,7 @@
 #
 
 source ${BASEDIR}/functions/iscreated.sh
-#source random.sh
+source ${BASEDIR}/functions/random.sh
 
 #1 hour -> 1x60x60 seconds
 #8 hours > 8x60x60 seconds
@@ -140,7 +140,9 @@ baterponto.saida() {
 	if [[ ! -z $send_summary ]] || [[ ! -z $send_summary2 ]]; then
 		#call sum function
 		#ponto.calc
-		message="$(cat $log/$file | cut -d',' -f4,5)"
+		random_file="/tmp/$(random.helper)"
+		cat $log/$file | cut -d',' -f4,5 > $random_file
+		message="$(cat $random_file)"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	fi
 }
