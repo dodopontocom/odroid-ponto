@@ -139,18 +139,34 @@ baterponto.saida() {
 	send_summary2=$(cat $log/$file | grep $day | grep ,$flag2)
 	if [[ ! -z $send_summary ]] || [[ ! -z $send_summary2 ]]; then
 		#call sum function
-		#ponto.calc
-		random_file="/tmp/$(random.helper)"
-		cat $log/$file | cut -d',' -f4,5 > $random_file
-		message="$(cat $random_file)"
+		#ponto.calc $log/$file
+		message="$(cat $log/$file)"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	fi
 }
 
 ponto.calc() {
-	#triggered_time will be $(date +%s)
-	triggered_time=$1
+	local file fsize time_spent_at_work
+	file=$1
+	fsize=$(cat $file | wc -l)
+	case ${fsize} in
+		'4' ) 	go_lunch_sec=$(cat $file | grep almoco | cut -d',' -f3)
+				work_day_start_sec=$(cat $file | grep entrada | cut -d',' -f3)
+				back_lunch_sec=$(cat $file | grep volta | cut -d',' -f3)
+				leave_day_sec=$(cat $file | grep saida | cut -d',' -f3)
 
+				first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
+				day_closure=$(echo $(((leave_day_sec-back_lunch_sec)-first_time_sum)))
+				time_spent_at_work=$(echo $(date -d "00:00 today + $day_closure seconds" +'%H:%M'))
+
+				message=$time_spent_at_work
+				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+			;;
+		'6' )	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+			;;
+		* )		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+			;;
+	esac
 	eight_hours_in_seconds_consider_lunch=32400
 	estimate_leave_hour=$(date -d "now + \
 	  $eight_hours_in_seconds_consider_lunch seconds" +'%H:%M')
