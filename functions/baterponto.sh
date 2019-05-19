@@ -156,7 +156,7 @@ ponto.calc() {
 				leave_day_sec=$(cat $file | grep saida | cut -d',' -f3)
 
 				first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
-				day_closure=$(echo $(((leave_day_sec-back_lunch_sec)-first_time_sum)))
+				day_closure=$(echo $(((leave_day_sec-back_lunch_sec)+first_time_sum)))
 				time_spent_at_work=$(echo $(date -d "00:00 today + $day_closure seconds" +'%H:%M'))
 
 				message=$time_spent_at_work
