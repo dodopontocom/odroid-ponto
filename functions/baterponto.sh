@@ -98,7 +98,7 @@ baterponto.volta() {
 	fi
 }
 baterponto.saida() {
-	local leave_day_sec work_day_start_sec reply_user estimate log file message flag flag2 weekday day verify verify_segunda_entrada
+	local leave_day_sec work_day_start_sec reply_user estimate log file message flag flag2 weekday day verify verify_segunda_entrada verify_segunda_saida
 	weekday=$(date +%a)
 	day=$(date +%Y%m%d)
 	file=${day}.csv
@@ -106,17 +106,21 @@ baterponto.saida() {
 	flag2=2saida
 	log=${BASEDIR}/logs/${message_from_id}
 	verify_segunda_entrada=$(cat $log/$file | grep $day | grep ,2entrada | cut -d',' -f4)
+	verify_segunda_saida=$(cat $log/$file | grep $day | grep ,2saida | cut -d',' -f4)
 
 	if [[ ! -f $log/$file ]] && [[ -z $verify_segunda_entrada ]]; then
 		message="Entrada ainda nao registrada. Registre a Entrada primeiro"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
-	elif [[ ! -z $verify_segunda_entrada ]]; then
+	elif [[ ! -z $verify_segunda_entrada ]] && [[ -z $verify_segunda_saida ]]; then
 		message="Registrando a Segunda saida -> "
 		leave_day_sec="$(date --date="now" +%s)"
 		reply_user=$(date --date="now" +'%H:%M')
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
 
 		echo "$day,$weekday,$leave_day_sec,$reply_user,$flag2" >> $log/$file
+	elif [[ ! -z $verify_segunda_saida ]]; then
+		message="Segunda saida foi registrada as ${verify_segunda_saida}"
+		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
 		verify=$(cat $log/$file | grep $day | grep $flag | cut -d',' -f4)
 		if [[ ! -z $verify ]]; then
