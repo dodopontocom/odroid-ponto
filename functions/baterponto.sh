@@ -98,7 +98,21 @@ baterponto.volta() {
 	fi
 }
 baterponto.saida() {
-	local leave_day_sec work_day_start_sec reply_user estimate log file message flag flag2 weekday day verify verify_segunda_entrada verify_segunda_saida
+	local leave_day_sec
+		work_day_start_sec
+		reply_user
+		estimate
+		log
+		file
+		message
+		flag
+		flag2
+		weekday
+		day
+		verify
+		verify_segunda_entrada
+		verify_segunda_saida
+		send_summary
 	weekday=$(date +%a)
 	day=$(date +%Y%m%d)
 	file=${day}.csv
@@ -134,6 +148,13 @@ baterponto.saida() {
 
 			echo "$day,$weekday,$leave_day_sec,$reply_user,$flag" >> $log/$file
 		fi
+	fi
+	send_summary=$(cat $log/$file | grep $day | grep ,$flag)
+	send_summary2=$(cat $log/$file | grep $day | grep ,$flag2)
+	if [[ ! -z $send_summary ]] || [[ ! -z $send_summary2 ]]; then
+		#call sum function
+		message="$(cat $log/$file)"
+		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	fi
 }
 
