@@ -139,7 +139,7 @@ baterponto.saida() {
 	send_summary2=$(cat $log/$file | grep $day | grep ,$flag2)
 	if [[ ! -z $send_summary ]] || [[ ! -z $send_summary2 ]]; then
 		#call sum function
-		#ponto.calc $log/$file
+		ponto.calc $log/$file
 		message="$(cat $log/$file)"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	fi
