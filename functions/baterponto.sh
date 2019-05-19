@@ -159,7 +159,8 @@ ponto.calc() {
 				day_closure=$(echo $(((leave_day_sec-back_lunch_sec)+first_time_sum)))
 				time_spent_at_work=$(echo $(date -d "00:00 today + $day_closure seconds" +'%H:%M'))
 
-				message=$time_spent_at_work
+				message="Tempo gasto hoje no trabalho: "
+				message+=$time_spent_at_work
 				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 			;;
 		'6' )	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
