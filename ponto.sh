@@ -66,6 +66,12 @@ while :
 do
 	
 	ShellBot.getUpdates --limit 100 --offset $(ShellBot.OffsetNext) --timeout 30
+
+	################# check if any user needs to be alerted about lunch time
+	for file in $(ls -1 $logs/*/$(date -)); do
+		baterponto.lunchAlert $file
+	done
+	########################################################################
 	
 	for id in $(ShellBot.ListUpdates)
 	do
