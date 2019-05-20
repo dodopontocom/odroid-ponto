@@ -50,7 +50,7 @@ baterponto.entrada() {
 	fi
 }
 baterponto.almoco() {
-	local go_lunch_sec work_day_start_sec reply_user estimate log file message flag weekday day verify
+	local go_lunch_sec work_day_start_sec reply_user return_lunch return_reply log file message flag weekday day verify one_hour_from_now
 	weekday=$(date +%a)
 	day=$(date +%Y%m%d)
 	file=${day}.csv
@@ -69,14 +69,21 @@ baterponto.almoco() {
 			message="Registrando horário de almoço -> "
 			go_lunch_sec="$(date --date="now" +%s)"
 			reply_user=$(date --date="now" +'%H:%M')
+			one_hour_from_now=$(date --date="now + 3600 seconds" +'%s')
+			return_lunch=$(echo $(((one_hour_from_now)-go_lunch_sec)))
+
+			return_reply="Considerando 1 hora de almoço, você pode retornar às -> "
+			return_reply+=$(echo $(date --date="00:00 today + $return_lunch seconds" +'%H:%M'))
+
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
+			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${return_reply})" --parse_mode markdown
 
 			echo "$day,$weekday,$go_lunch_sec,$reply_user,$flag" >> $log/$file
 		fi
 	fi
 }
 baterponto.volta() {
-	local back_lunch_sec work_day_start_sec reply_user estimate log file message flag weekday day verify
+	local back_lunch_sec work_day_start_sec reply_user estimate log file message flag weekday day verify go_lunch_sec time_in_lunch first_time_sum estimate_after_lunch
 	weekday=$(date +%a)
 	day=$(date +%Y%m%d)
 	file=${day}.csv
@@ -99,6 +106,16 @@ baterponto.volta() {
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
 
 			echo "$day,$weekday,$back_lunch_sec,$reply_user,$flag" >> $log/$file
+			go_lunch_sec=$(cat $log/$file | grep $day | grep ,almoco | cut -d',' -f3)
+			time_in_lunch=$(echo $(((back_lunch_sec-go_lunch_sec))))
+			work_day_start_sec=$(cat $log/$file | grep $day | grep ,entrada | cut -d',' -f3)
+			first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
+			
+			estimate_after_lunch="Horário atualizado estimado de saída -> "
+			estimate_after_lunch+=$(date --date="now + $(echo $(((eight_hours_in_seconds+time_in_lunch)))) seconds" +'%H:%M')
+
+			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${estimate_after_lunch})" --parse_mode markdown
+
 		fi
 	fi
 }
@@ -152,14 +169,14 @@ baterponto.saida() {
 }
 
 ponto.calc() {
-	local file fsize time_spent_at_work
+	local message file fsize time_spent_at_work go_lunch_sec work_day_start_sec back_lunch_sec leave_day_sec first_time_sum day_closure
 	file=$1
 	fsize=$(cat $file | wc -l)
 	case ${fsize} in
 		'4' ) 	go_lunch_sec=$(cat $file | grep almoco | cut -d',' -f3)
-				work_day_start_sec=$(cat $file | grep entrada | cut -d',' -f3)
-				back_lunch_sec=$(cat $file | grep volta | cut -d',' -f3)
-				leave_day_sec=$(cat $file | grep saida | cut -d',' -f3)
+				work_day_start_sec=$(cat $file | grep ,entrada | cut -d',' -f3)
+				back_lunch_sec=$(cat $file | grep ,volta | cut -d',' -f3)
+				leave_day_sec=$(cat $file | grep ,saida | cut -d',' -f3)
 
 				first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
 				day_closure=$(echo $(((leave_day_sec-back_lunch_sec)+first_time_sum)))
@@ -169,10 +186,26 @@ ponto.calc() {
 				message+=$time_spent_at_work
 				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 			;;
-		'6' )	echo "chegou aqui"
-				#ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+		'6' )	go_lunch_sec=$(cat $file | grep almoco | cut -d',' -f3)
+				work_day_start_sec=$(cat $file | grep ,entrada | cut -d',' -f3)
+				back_lunch_sec=$(cat $file | grep ,volta | cut -d',' -f3)
+				leave_day_sec=$(cat $file | grep ,saida | cut -d',' -f3)
+
+				first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
+
+				second_entry=$(cat $file | grep ,2entrada | cut -d',' -f3)
+				second_saida=$(cat $file | grep ,2saida | cut -d',' -f3)
+				second_time_sum=$(echo $(((second_saida-second_entry))))
+
+				day_closure=$(echo $((second_time_sum+first_time_sum)))
+				time_spent_at_work=$(echo $(date -d "00:00 today + $day_closure seconds" +'%H:%M'))
+
+				message="Tempo gasto hoje no trabalho: "
+				message+=$time_spent_at_work
+				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 			;;
-		* )		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+		* )		message="Error: inesperado"
+				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 			;;
 	esac
 	eight_hours_in_seconds_consider_lunch=32400
