@@ -25,7 +25,7 @@ btn_opcoes='
 ["Entrada ⌛"],
 ["Almoço 🍔", "Volta Almoço ☕"],
 ["Saída 🙏"],
-["Ajuda", "Configuracoes", "Editar"]
+["Ajuda", "configurações", "Editar"]
 '
 
 ch_keyboard1="$(ShellBot.ReplyKeyboardMarkup --button 'btn_opcoes' --one_time_keyboard true)"

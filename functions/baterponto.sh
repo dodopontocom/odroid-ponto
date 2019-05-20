@@ -24,7 +24,7 @@ baterponto.entrada() {
 	verify_entrada2=$(cat $log/$file | grep $day | grep ,$flag2 | cut -d',' -f4)
 
 	if [[ ! -z $verify ]] && [[ -z $verify_saida ]]; then
-		message="Entrada de hoje foi registrada as ${verify}"
+		message="Entrada de hoje foi registrada às ${verify}"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	elif [[ ! -z $verify_saida ]] && [[ -z $verify_entrada2 ]]; then
 		message="Registrando horário da Segunda entrada -> "
@@ -34,7 +34,7 @@ baterponto.entrada() {
 
 		echo "$day,$weekday,$work_day_start_sec,$reply_user,$flag2" >> $log/$file
 	elif [[ ! -z $verify_entrada2 ]]; then
-		message=" Segunda entrada de hoje foi registrada as ${verify_entrada2}"
+		message=" Segunda entrada de hoje foi registrada às ${verify_entrada2}"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
 		message="Registrando horário de entrada -> "
@@ -54,15 +54,15 @@ baterponto.almoco() {
 	log=${BASEDIR}/logs/${message_from_id}
 	
 	if [[ ! -f $log/$file ]]; then
-		message="Entrada ainda nao registrada. Registre a Entrada primeiro"
+		message="Entrada ainda não registrada. Registre a Entrada primeiro"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
 		verify=$(cat $log/$file | grep $day | grep $flag | cut -d',' -f4)
 		if [[ ! -z $verify ]]; then
-			message="Saida para almoco foi registrada as ${verify}"
+			message="Saída para almoco foi registrada às ${verify}"
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 		else
-			message="Registrando horário de almoco -> "
+			message="Registrando horário de almoço -> "
 			go_lunch_sec="$(date --date="now" +%s)"
 			reply_user=$(date --date="now" +'%H:%M')
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
@@ -80,15 +80,16 @@ baterponto.volta() {
 	log=${BASEDIR}/logs/${message_from_id}
 	
 	if [[ ! -f $log/$file ]]; then
-		message="Entrada ainda nao registrada. Registre a Entrada primeiro"
+		message="Entrada ainda não registrada.\n"
+		message+="Registre a Entrada primeiro."
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
 		verify=$(cat $log/$file | grep $day | grep $flag | cut -d',' -f4)
 		if [[ ! -z $verify ]]; then
-			message="Volta do almoco foi registrada as ${verify}"
+			message="Volta do almoço foi registrada às ${verify}"
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 		else
-			message="Registrando a volta do almoco -> "
+			message="Registrando a volta do almoço -> "
 			back_lunch_sec="$(date --date="now" +%s)"
 			reply_user=$(date --date="now" +'%H:%M')
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
@@ -109,25 +110,26 @@ baterponto.saida() {
 	verify_segunda_saida=$(cat $log/$file | grep $day | grep ,2saida | cut -d',' -f4)
 
 	if [[ ! -f $log/$file ]] && [[ -z $verify_segunda_entrada ]]; then
-		message="Entrada ainda nao registrada. Registre a Entrada primeiro"
+		message="Entrada ainda não registrada.\n"
+		message+="Registre a Entrada primeiro."
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	elif [[ ! -z $verify_segunda_entrada ]] && [[ -z $verify_segunda_saida ]]; then
-		message="Registrando a Segunda saida -> "
+		message="Registrando a Segunda saída -> "
 		leave_day_sec="$(date --date="now" +%s)"
 		reply_user=$(date --date="now" +'%H:%M')
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
 
 		echo "$day,$weekday,$leave_day_sec,$reply_user,$flag2" >> $log/$file
 	elif [[ ! -z $verify_segunda_saida ]]; then
-		message="Segunda saida foi registrada as ${verify_segunda_saida}"
+		message="Segunda saída foi registrada às ${verify_segunda_saida}"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
 		verify=$(cat $log/$file | grep $day | grep $flag | cut -d',' -f4)
 		if [[ ! -z $verify ]]; then
-			message="Saida foi registrada as ${verify}"
+			message="Saída foi registrada às ${verify}"
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 		else
-			message="Registrando a saida -> "
+			message="Registrando a saída -> "
 			leave_day_sec="$(date --date="now" +%s)"
 			reply_user=$(date --date="now" +'%H:%M')
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
@@ -163,7 +165,7 @@ ponto.calc() {
 				message+=$time_spent_at_work
 				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 			;;
-		'6' )	echo "veio aqui "
+		'6' )	echo "chegou aqui"
 				#ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 			;;
 		* )		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
