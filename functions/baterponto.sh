@@ -1,13 +1,12 @@
 #!/bin/bash
 #
-
 source ${BASEDIR}/functions/iscreated.sh
 source ${BASEDIR}/functions/random.sh
-
 #1 hour -> 1x60x60 seconds
 #8 hours > 8x60x60 seconds
 eight_hours_in_seconds=28800
 four_hours_in_seconds=$(echo $((eight_hours_in_seconds/2)))
+eight_hours_in_seconds_consider_lunch=32400
 
 baterponto.entrada() {
 	local work_day_start_sec reply_user estimate log file message flag flag2 weekday day verify verify_saida
@@ -40,9 +39,14 @@ baterponto.entrada() {
 		message="Registrando horário de entrada -> "
 		work_day_start_sec="$(date --date="now" +%s)"
 		reply_user=$(date --date="now" +'%H:%M')
+		estimate="Hora aproximada para saída (considerando 8 horas de trabalho com 1 hora de almoço) -> "
+		estimate+=$(date --date="now + $eight_hours_in_seconds_consider_lunch seconds" +'%H:%M')
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
-
+		
 		echo "$day,$weekday,$work_day_start_sec,$reply_user,$flag" >> $log/$file
+
+		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${estimate})" --parse_mode markdown
+
 	fi
 }
 baterponto.almoco() {
