@@ -1,7 +1,6 @@
 #!/bin/bash
 #
 #e.g. : convert.weekdayPtbr $(date +%u)
-local segunda terca quarta quinta sexta sabado domingo
 convert.weekdayPtbr() {
 
   local day
