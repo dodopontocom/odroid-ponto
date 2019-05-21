@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-sleep 10
+#sleep 10
 
 # Importando API
 BASEDIR=$(dirname $0)
@@ -68,8 +68,13 @@ do
 	ShellBot.getUpdates --limit 100 --offset $(ShellBot.OffsetNext) --timeout 30
 
 	################# check if any user needs to be alerted about lunch time
-	for file in $(ls -1 $logs/*/$(date +%Y%m%d).csv); do
-		baterponto.lunchAlert $file
+	for file in $(find $logs -name "$(date +%Y%m%d).csv"); do
+		if [[ ! -f ${file}.alert15 ]]; then
+			baterponto.lunchAlert $file
+		fi
+		if [[ ! -f ${file}.alert5 ]]; then
+			baterponto.lunchAlert $file
+		fi
 	done
 	########################################################################
 	
