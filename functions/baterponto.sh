@@ -200,14 +200,10 @@ baterponto.calc() {
 				leave_day_sec=$(cat $file | grep ,saida | cut -d',' -f3)
 
 				first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
-				echo $first_time_sum
 				day_closure1=$(echo $(((leave_day_sec-back_lunch_sec)+first_time_sum)))
 				second_entry=$(cat $file | grep ,2entrada | cut -d',' -f3)
-				echo $second_entry
 				second_saida=$(cat $file | grep ,2saida | cut -d',' -f3)
-				echo $second_saida
 				second_time_sum=$(echo $(((second_saida-second_entry))))
-				echo $second_time_sum
 
 				day_closure2=$(echo $(((second_saida-second_entry)+second_time_sum)))
 				day_closure3=$(echo $((day_closure1+day_closure2)))
@@ -219,7 +215,8 @@ baterponto.calc() {
 				message+=$time_spent_at_work
 				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 			;;
-		* )		message="Error: inesperado"
+		* )		message="*Error: inesperado.*\n"
+				message+="Não foi possível calcular o tempo gasto hoje no trabalho."
 				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 			;;
 	esac
