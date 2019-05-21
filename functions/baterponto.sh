@@ -70,11 +70,9 @@ baterponto.almoco() {
 			message="Registrando horário de almoço -> "
 			go_lunch_sec="$(date --date="now" +%s)"
 			reply_user=$(date --date="now" +'%H:%M')
-			one_hour_from_now=$(date --date="now + 3600 seconds" +'%s')
-			return_lunch=$(echo $(((one_hour_from_now)-go_lunch_sec)))
-
+			
 			return_reply="Considerando 1 hora de almoço, você pode retornar às -> "
-			return_reply+=$(echo $(date --date="00:00 today + $return_lunch seconds" +'%H:%M'))
+			return_reply+=$(echo $(date --date="now + 3600 seconds" +'%H:%M'))
 
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${return_reply})" --parse_mode markdown
