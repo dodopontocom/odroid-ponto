@@ -2,6 +2,7 @@
 #
 source ${BASEDIR}/functions/iscreated.sh
 source ${BASEDIR}/functions/random.sh
+source ${BASEDIR}/functions/convert-weekday.sh
 #1 hour -> 1x60x60 seconds
 #8 hours > 8x60x60 seconds
 eight_hours_in_seconds=28800
@@ -10,7 +11,7 @@ eight_hours_in_seconds_consider_lunch=32400
 
 baterponto.entrada() {
 	local work_day_start_sec reply_user estimate log file message flag flag2 weekday day verify verify_saida
-	weekday=$(date +%a)
+	weekday=$(convert.weekdayPtbr $(date +%u))
 	day=$(date +%Y%m%d)
 	file=${day}.csv
 	flag=entrada
@@ -51,7 +52,7 @@ baterponto.entrada() {
 }
 baterponto.almoco() {
 	local go_lunch_sec work_day_start_sec reply_user return_lunch return_reply log file message flag weekday day verify one_hour_from_now
-	weekday=$(date +%a)
+	weekday=$(convert.weekdayPtbr $(date +%u))
 	day=$(date +%Y%m%d)
 	file=${day}.csv
 	flag=almoco
@@ -84,7 +85,7 @@ baterponto.almoco() {
 }
 baterponto.volta() {
 	local back_lunch_sec work_day_start_sec reply_user estimate log file message flag weekday day verify go_lunch_sec time_in_lunch first_time_sum estimate_after_lunch
-	weekday=$(date +%a)
+	weekday=$(convert.weekdayPtbr $(date +%u))
 	day=$(date +%Y%m%d)
 	file=${day}.csv
 	flag=volta
@@ -121,7 +122,7 @@ baterponto.volta() {
 }
 baterponto.saida() {
 	local leave_day_sec work_day_start_sec reply_user estimate log file message flag flag2 weekday day verify verify_segunda_entrada verify_segunda_saida send_summary 
-	weekday=$(date +%a)
+	weekday=$(convert.weekdayPtbr $(date +%u))
 	day=$(date +%Y%m%d)
 	file=${day}.csv
 	flag=saida
