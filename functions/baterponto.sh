@@ -51,15 +51,20 @@ baterponto.entrada() {
 	fi
 }
 baterponto.almoco() {
-	local go_lunch_sec work_day_start_sec reply_user return_lunch return_reply log file message flag weekday day verify one_hour_from_now
+	local check_saida go_lunch_sec work_day_start_sec reply_user return_lunch return_reply log file message flag weekday day verify one_hour_from_now
 	weekday=$(convert.weekdayPtbr $(date +%u))
 	day=$(date +%Y%m%d)
 	file=${day}.csv
 	flag=almoco
 	log=${BASEDIR}/logs/${message_from_id}
+	check_saida=$(cat $log/$file | grep 20190521 | grep ,saida)
 	
 	if [[ ! -f $log/$file ]]; then
 		message="Entrada ainda não registrada. Registre a Entrada primeiro"
+		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+	elif [[ ! -z $check_saida ]]; then
+		message="Ops, saída já foi registrada às -> *$(cat $log/$file | grep 20190521 | grep ,saida | cut -d',' -f4)*\n"
+		message+="Você deve registrar a entrada novamente"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
 		verify=$(cat $log/$file | grep $day | grep $flag | cut -d',' -f4)
@@ -82,16 +87,21 @@ baterponto.almoco() {
 	fi
 }
 baterponto.volta() {
-	local back_lunch_sec work_day_start_sec reply_user estimate log file message flag weekday day verify go_lunch_sec time_in_lunch first_time_sum estimate_after_lunch
+	local check_almoco back_lunch_sec work_day_start_sec reply_user estimate log file message flag weekday day verify go_lunch_sec time_in_lunch first_time_sum estimate_after_lunch
 	weekday=$(convert.weekdayPtbr $(date +%u))
 	day=$(date +%Y%m%d)
 	file=${day}.csv
 	flag=volta
 	log=${BASEDIR}/logs/${message_from_id}
+	check_almoco=$(cat $log/$file | grep 20190521 | grep ,almoco)
 	
 	if [[ ! -f $log/$file ]]; then
 		message="Entrada ainda não registrada.\n"
 		message+="Registre a Entrada primeiro."
+		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+	elif [[ -z $check_almoco ]]; then
+		message="Ops, você ainda não registrou a saída para o almoço.\n"
+		message+="Registre a saída para almoço."
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
 		verify=$(cat $log/$file | grep $day | grep $flag | cut -d',' -f4)
