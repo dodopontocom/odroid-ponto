@@ -185,19 +185,26 @@ baterponto.calc() {
 				message+=$time_spent_at_work
 				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 			;;
-		'6' )	go_lunch_sec=$(cat $file | grep almoco | cut -d',' -f3)
+		'6' )	go_lunch_sec=$(cat $file | grep ,almoco | cut -d',' -f3)
 				work_day_start_sec=$(cat $file | grep ,entrada | cut -d',' -f3)
 				back_lunch_sec=$(cat $file | grep ,volta | cut -d',' -f3)
 				leave_day_sec=$(cat $file | grep ,saida | cut -d',' -f3)
 
 				first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
-
+				echo $first_time_sum
+				day_closure1=$(echo $(((leave_day_sec-back_lunch_sec)+first_time_sum)))
 				second_entry=$(cat $file | grep ,2entrada | cut -d',' -f3)
+				echo $second_entry
 				second_saida=$(cat $file | grep ,2saida | cut -d',' -f3)
+				echo $second_saida
 				second_time_sum=$(echo $(((second_saida-second_entry))))
+				echo $second_time_sum
 
-				day_closure=$(echo $((second_time_sum+first_time_sum)))
-				time_spent_at_work=$(echo $(date -d "00:00 today + $day_closure seconds" +'%H:%M'))
+				day_closure2=$(echo $(((second_saida-second_entry)+second_time_sum)))
+				day_closure3=$(echo $((day_closure1+day_closure2)))
+				echo $day_closure3
+				time_spent_at_work=$(echo $(date -d "00:00 today + $day_closure3 seconds" +'%H:%M'))
+				echo $time_spent_at_work
 
 				message="Tempo gasto hoje no trabalho: "
 				message+=$time_spent_at_work
