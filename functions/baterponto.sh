@@ -172,6 +172,15 @@ baterponto.calc() {
 	file=$1
 	fsize=$(cat $file | wc -l)
 	case ${fsize} in
+		'2' )	work_day_start_sec=$(cat $file | grep ,entrada | cut -d',' -f3)
+				leave_day_sec=$(cat $file | grep ,saida | cut -d',' -f3)
+				first_time_sum=$(echo $(((leave_day_sec-work_day_start_sec))))
+				time_spent_at_work=$(echo $(date -d "00:00 today + $first_time_sum seconds" +'%H:%M'))
+
+				message="Tempo gasto hoje no trabalho: "
+				message+=$time_spent_at_work
+				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+			;;
 		'4' ) 	go_lunch_sec=$(cat $file | grep almoco | cut -d',' -f3)
 				work_day_start_sec=$(cat $file | grep ,entrada | cut -d',' -f3)
 				back_lunch_sec=$(cat $file | grep ,volta | cut -d',' -f3)
