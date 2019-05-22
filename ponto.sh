@@ -106,7 +106,10 @@ do
 					;;
 				"Ajuda ⁉️")	 ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
 					;;
-				"Conf ⚙")	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
+				"Conf ⚙")
+							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "*Edite as Configurações*" \
+									--reply_markup "$config_keyboard1" --parse_mode markdown
+							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
 					;;
 				"Editar 💾") ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
 					;;
