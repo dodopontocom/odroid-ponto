@@ -27,10 +27,15 @@ btn_opcoes='
 ["Saída 🙏"],
 ["Ajuda ⁉️", "Conf ⚙", "Editar 💾"]
 '
-
 ch_keyboard1="$(ShellBot.ReplyKeyboardMarkup --button 'btn_opcoes' --one_time_keyboard true)"
 
-
+btn_config='
+["Alertas"],
+["Resumos"],
+["Período Diário"],
+["Ajuda ⁉️", "Conf ⚙", "Editar 💾"]
+'
+config_keyboard1="$(ShellBot.ReplyKeyboardMarkup --button 'btn_config' --one_time_keyboard true)"
 
 #######################################################################################
 #❌
@@ -97,11 +102,20 @@ do
 					;;
 				"Saída 🙏") baterponto.saida
 					;;
-				"Ajuda ⁉️") ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
+				"Ajuda ⁉️")	 ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
+							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text '*Marcar Ponto*' \
+									--reply_markup "$ch_keyboard1" \
+									--parse_mode markdown
 					;;
-				"Conf ⚙") ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
+				"Conf ⚙") 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text '*Configurações*' \
+									--reply_markup "$config_keyboard1" \
+									--parse_mode markdown
+							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
 					;;
 				"Editar 💾") ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
+							 ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text '*Marcar Ponto*' \
+									--reply_markup "$ch_keyboard1" \
+									--parse_mode markdown
 					;;
 				*) ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text '*Marcar Ponto*' \
 									--reply_markup "$ch_keyboard1" \
