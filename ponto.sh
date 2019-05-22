@@ -25,7 +25,7 @@ btn_opcoes='
 ["Entrada ⌛"],
 ["Almoço 🍔", "Volta Almoço ☕"],
 ["Saída 🙏"],
-["Ajuda", "configurações", "Editar"]
+["Ajuda ⁉️", "Conf ⚙", "Editar 💾"]
 '
 
 ch_keyboard1="$(ShellBot.ReplyKeyboardMarkup --button 'btn_opcoes' --one_time_keyboard true)"
@@ -96,6 +96,12 @@ do
 				"Volta Almoço ☕") baterponto.volta
 					;;
 				"Saída 🙏") baterponto.saida
+					;;
+				"Ajuda ⁉️") ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
+					;;
+				"Conf ⚙") ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
+					;;
+				"Editar 💾") ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
 					;;
 				*) ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text '*Marcar Ponto*' \
 									--reply_markup "$ch_keyboard1" \
