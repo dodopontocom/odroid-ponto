@@ -230,25 +230,30 @@ baterponto.calc() {
 	esac
 }
 
+#echo $(((1558653250+3600)-dt_now))
+#echo $((($(cat 20190523.csv | grep ,almoco | cut -d',' -f3)+3600)-1558630000))
 baterponto.lunchAlert() {
 	#return alert to the user when 1 hour of lunch is expiring
 	local complete_one_hour_in_sec file day fift_min_in_sec five_min_in_sec dt_now user_id message check_volta check_almoco
 	five_min_in_sec=300
 	fift_min_in_sec=900
 	file=$1
+	echo "====================================================================$file"
 	day=$(date +%Y%m%d)
 	user_id=$(echo $file | rev | cut -d'/' -f2 | rev)
-	complete_one_hour_in_sec=$(echo $(($(cat $file | grep $day | grep ,almoco | cut -d',' -f3)+3600)))
+	complete_one_hour_in_sec=$(cat $file | grep $day | grep ,almoco | cut -d',' -f3)
+	echo "========================================$complete_one_hour_in_sec"
 	check_volta=$(cat $file | grep $day | grep ,volta)
 
 	dt_now=$(date --date="now" +'%s')
-	if [[ $((dt_now-complete_one_hour_in_sec)) -lt $fift_min_in_sec ]] && [[ -z $check_volta ]]; then
+	echo "========================================$dt_now"
+	if [[ ! -f ${file}.alert15 ]] && [[ ! -z $complete_one_hour_in_sec ]] && [[ $((($(cat $file | grep $day | grep ,almoco | cut -d',' -f3)+3600)-dt_now)) -lt $fift_min_in_sec ]] && [[ -z $check_volta ]]; then
 		message="Alerta, faltam 15 minutos para completar 1 hora de almoço..."
 		ShellBot.sendMessage --chat_id ${user_id} --text "$(echo -e ${message})" --parse_mode markdown
 		touch ${file}.alert15
 		 
 	fi
-	if [[ $((dt_now-complete_one_hour_in_sec)) -lt $five_min_in_sec ]] && [[ -z $check_volta ]]; then
+	if [[ ! -f ${file}.alert5 ]] && [[ ! -z $complete_one_hour_in_sec ]] && [[ $((($(cat $file | grep $day | grep ,almoco | cut -d',' -f3)+3600)-dt_now)) -lt $five_min_in_sec ]] && [[ -z $check_volta ]]; then
 		message="Alerta, faltam apenas 5 minutos para completar 1 hora de almoço..."
 		ShellBot.sendMessage --chat_id ${user_id} --text "$(echo -e ${message})" --parse_mode markdown
 		touch ${file}.alert5

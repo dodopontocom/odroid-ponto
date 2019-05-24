@@ -1,3 +1,4 @@
 .token
 ShellBot.sh
 logs/
+nohup.out

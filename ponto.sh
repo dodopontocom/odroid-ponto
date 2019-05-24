@@ -21,6 +21,8 @@ bot_token=$(cat ${BASEDIR}/.token)
 # Inicializando o bot
 ShellBot.init --token "$bot_token" --monitor --flush
 
+ShellBot.ReplyKeyboardRemove
+
 btn_config='
 ["Alertas ->", "30min", "*15min", "5min"],
 ["Resumos ->", "Dia", "Semana", "Mês"],
