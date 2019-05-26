@@ -93,16 +93,16 @@ baterponto.volta() {
 	file=${day}.csv
 	flag=volta
 	log=${BASEDIR}/logs/${message_from_id}
-	check_almoco=$(cat $log/$file | grep 20190521 | grep ,almoco)
+	check_almoco=$(cat $log/$file | grep $day | grep ,almoco)
 	
 	if [[ ! -f $log/$file ]]; then
 		message="Entrada ainda não registrada.\n"
 		message+="Registre a Entrada primeiro."
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
-	# elif [[ -z $check_almoco ]]; then
-	# 	message="Ops, você ainda não registrou a saída para o almoço.\n"
-	# 	message+="Registre a saída para almoço."
-	# 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+	elif [[ -z $check_almoco ]]; then
+		message="Ops, você ainda não registrou a saída para o almoço.\n"
+	 	message+="Registre a saída para almoço."
+	 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
 		verify=$(cat $log/$file | grep $day | grep $flag | cut -d',' -f4)
 		if [[ ! -z $verify ]]; then
@@ -171,7 +171,8 @@ baterponto.saida() {
 	send_summary2=$(cat $log/$file | grep $day | grep ,$flag2)
 	if [[ ! -z $send_summary ]] || [[ ! -z $send_summary2 ]]; then
 		baterponto.calc "$log/$file"
-		message=$(cat $log/$file)
+		message="Resumo do dia\n"
+		message+=$(cat $log/$file | awk -F',' '{print $5 " às " "*"$4"*""\\n"}')
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	fi
 }
@@ -238,15 +239,12 @@ baterponto.lunchAlert() {
 	five_min_in_sec=300
 	fift_min_in_sec=900
 	file=$1
-	echo "====================================================================$file"
 	day=$(date +%Y%m%d)
 	user_id=$(echo $file | rev | cut -d'/' -f2 | rev)
 	complete_one_hour_in_sec=$(cat $file | grep $day | grep ,almoco | cut -d',' -f3)
-	echo "========================================$complete_one_hour_in_sec"
 	check_volta=$(cat $file | grep $day | grep ,volta)
 
 	dt_now=$(date --date="now" +'%s')
-	echo "========================================$dt_now"
 	if [[ ! -f ${file}.alert15 ]] && [[ ! -z $complete_one_hour_in_sec ]] && [[ $((($(cat $file | grep $day | grep ,almoco | cut -d',' -f3)+3600)-dt_now)) -lt $fift_min_in_sec ]] && [[ -z $check_volta ]]; then
 		message="Alerta, faltam 15 minutos para completar 1 hora de almoço..."
 		ShellBot.sendMessage --chat_id ${user_id} --text "$(echo -e ${message})" --parse_mode markdown
