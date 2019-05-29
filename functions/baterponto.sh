@@ -121,7 +121,7 @@ baterponto.volta() {
 			first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
 			
 			estimate_after_lunch="Horário atualizado estimado de saída -> "
-			estimate_after_lunch+=$(date --date="now + $(echo $(((eight_hours_in_seconds+time_in_lunch)))) seconds" +'%H:%M')
+			estimate_after_lunch+=$(date --date="now + $(echo $((eight_hours_in_seconds - (first_time_sum + time_in_lunch)))) seconds" +'%H:%M')
 
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${estimate_after_lunch})" --parse_mode markdown
 
