@@ -24,24 +24,24 @@ baterponto.entrada() {
 	verify_entrada2=$(cat $log/$file | grep $day | grep ,$flag2 | cut -d',' -f4)
 
 	if [[ ! -z $verify ]] && [[ -z $verify_saida ]]; then
-		message="Entrada de hoje foi registrada às ${verify}"
+		message="Entrada de hoje foi registrada às *${verify}*"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	elif [[ ! -z $verify_saida ]] && [[ -z $verify_entrada2 ]]; then
 		message="Registrando horário da Segunda entrada -> "
-		work_day_start_sec="$(date --date="now" +%s)"
+		work_day_start_sec="*$(date --date="now" +%s)*"
 		reply_user=$(date --date="now" +'%H:%M')
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
 
 		echo "$day,$weekday,$work_day_start_sec,$reply_user,$flag2" >> $log/$file
 	elif [[ ! -z $verify_entrada2 ]]; then
-		message=" Segunda entrada de hoje foi registrada às ${verify_entrada2}"
+		message=" Segunda entrada de hoje foi registrada às *${verify_entrada2}*"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
 		message="Registrando horário de entrada -> "
-		work_day_start_sec="$(date --date="now" +%s)"
+		work_day_start_sec="*$(date --date="now" +%s)*"
 		reply_user=$(date --date="now" +'%H:%M')
 		estimate="Hora aproximada para saída (considerando 8 horas de trabalho com 1 hora de almoço) -> "
-		estimate+=$(date --date="now + $eight_hours_in_seconds_consider_lunch seconds" +'%H:%M')
+		estimate+="*$(date --date="now + $eight_hours_in_seconds_consider_lunch seconds" +'%H:%M')*"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
 		
 		echo "$day,$weekday,$work_day_start_sec,$reply_user,$flag" >> $log/$file
@@ -69,15 +69,15 @@ baterponto.almoco() {
 	else
 		verify=$(cat $log/$file | grep $day | grep $flag | cut -d',' -f4)
 		if [[ ! -z $verify ]]; then
-			message="Saída para almoco foi registrada às ${verify}"
+			message="Saída para almoco foi registrada às *${verify}*"
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 		else
 			message="Registrando horário de almoço -> "
-			go_lunch_sec="$(date --date="now" +%s)"
+			go_lunch_sec="*$(date --date="now" +%s)*"
 			reply_user=$(date --date="now" +'%H:%M')
 			
 			return_reply="Considerando 1 hora de almoço, você pode retornar às -> "
-			return_reply+=$(echo $(date --date="now + 3600 seconds" +'%H:%M'))
+			return_reply+="*$(echo $(date --date="now + 3600 seconds" +'%H:%M'))*"
 
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${return_reply})" --parse_mode markdown
@@ -106,11 +106,11 @@ baterponto.volta() {
 	else
 		verify=$(cat $log/$file | grep $day | grep $flag | cut -d',' -f4)
 		if [[ ! -z $verify ]]; then
-			message="Volta do almoço foi registrada às ${verify}"
+			message="Volta do almoço foi registrada às *${verify}*"
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 		else
 			message="Registrando a volta do almoço -> "
-			back_lunch_sec="$(date --date="now" +%s)"
+			back_lunch_sec="*$(date --date="now" +%s)*"
 			reply_user=$(date --date="now" +'%H:%M')
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
 
@@ -121,7 +121,9 @@ baterponto.volta() {
 			first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
 			
 			estimate_after_lunch="Horário atualizado estimado de saída -> "
+			estimate_after_lunch+="*"
 			estimate_after_lunch+=$(date --date="now + $(echo $((eight_hours_in_seconds - (first_time_sum + time_in_lunch)))) seconds" +'%H:%M')
+			estimate_after_lunch+="*"
 
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${estimate_after_lunch})" --parse_mode markdown
 
@@ -145,7 +147,7 @@ baterponto.saida() {
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	elif [[ ! -z $verify_segunda_entrada ]] && [[ -z $verify_segunda_saida ]]; then
 		message="Registrando a Segunda saída -> "
-		leave_day_sec="$(date --date="now" +%s)"
+		leave_day_sec="*$(date --date="now" +%s)*"
 		reply_user=$(date --date="now" +'%H:%M')
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} *${reply_user}*)" --parse_mode markdown
 
@@ -160,7 +162,7 @@ baterponto.saida() {
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 		else
 			message="Registrando a saída -> "
-			leave_day_sec="$(date --date="now" +%s)"
+			leave_day_sec="*$(date --date="now" +%s)*"
 			reply_user=$(date --date="now" +'%H:%M')
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} *${reply_user}*)" --parse_mode markdown
 
@@ -191,8 +193,8 @@ baterponto.calc() {
 				message+="*$time_spent_at_work*"
 				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 			;;
-		'4' ) 	go_lunch_sec=$(cat $file | grep almoco | cut -d',' -f3)
-				work_day_start_sec=$(cat $file | grep ,entrada | cut -d',' -f3)
+		'4' ) 	work_day_start_sec=$(cat $file | grep ,entrada | cut -d',' -f3)
+				go_lunch_sec=$(cat $file | grep ,almoco | cut -d',' -f3)
 				back_lunch_sec=$(cat $file | grep ,volta | cut -d',' -f3)
 				leave_day_sec=$(cat $file | grep ,saida | cut -d',' -f3)
 
@@ -246,13 +248,13 @@ baterponto.lunchAlert() {
 
 	dt_now=$(date --date="now" +'%s')
 	if [[ ! -f ${file}.alert15 ]] && [[ ! -z $complete_one_hour_in_sec ]] && [[ $((($(cat $file | grep $day | grep ,almoco | cut -d',' -f3)+3600)-dt_now)) -lt $fift_min_in_sec ]] && [[ -z $check_volta ]]; then
-		message="Alerta, faltam 15 minutos para completar 1 hora de almoço..."
+		message="Alerta, faltam *15* minutos para completar 1 hora de almoço..."
 		ShellBot.sendMessage --chat_id ${user_id} --text "$(echo -e ${message})" --parse_mode markdown
 		touch ${file}.alert15
 		 
 	fi
 	if [[ ! -f ${file}.alert5 ]] && [[ ! -z $complete_one_hour_in_sec ]] && [[ $((($(cat $file | grep $day | grep ,almoco | cut -d',' -f3)+3600)-dt_now)) -lt $five_min_in_sec ]] && [[ -z $check_volta ]]; then
-		message="Alerta, faltam apenas 5 minutos para completar 1 hora de almoço..."
+		message="Alerta, faltam apenas *5* minutos para completar 1 hora de almoço..."
 		ShellBot.sendMessage --chat_id ${user_id} --text "$(echo -e ${message})" --parse_mode markdown
 		touch ${file}.alert5
 	fi
