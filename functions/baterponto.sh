@@ -28,7 +28,7 @@ baterponto.entrada() {
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	elif [[ ! -z $verify_saida ]] && [[ -z $verify_entrada2 ]]; then
 		message="Registrando horário da Segunda entrada -> "
-		work_day_start_sec="*$(date --date="now" +%s)*"
+		work_day_start_sec="$(date --date="now" +%s)"
 		reply_user=$(date --date="now" +'%H:%M')
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} ${reply_user})" --parse_mode markdown
 
@@ -38,7 +38,7 @@ baterponto.entrada() {
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	else
 		message="Registrando horário de entrada -> "
-		work_day_start_sec="*$(date --date="now" +%s)*"
+		work_day_start_sec="$(date --date="now" +%s)"
 		reply_user=$(date --date="now" +'%H:%M')
 		estimate="Hora aproximada para saída (considerando 8 horas de trabalho com 1 hora de almoço) -> "
 		estimate+="*$(date --date="now + $eight_hours_in_seconds_consider_lunch seconds" +'%H:%M')*"
@@ -73,7 +73,7 @@ baterponto.almoco() {
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 		else
 			message="Registrando horário de almoço -> "
-			go_lunch_sec="*$(date --date="now" +%s)*"
+			go_lunch_sec="$(date --date="now" +%s)"
 			reply_user=$(date --date="now" +'%H:%M')
 			
 			return_reply="Considerando 1 hora de almoço, você pode retornar às -> "
@@ -121,9 +121,7 @@ baterponto.volta() {
 			first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
 			
 			estimate_after_lunch="Horário atualizado estimado de saída -> "
-			estimate_after_lunch+="*"
 			estimate_after_lunch+=$(date --date="now + $(echo $((eight_hours_in_seconds - (first_time_sum + time_in_lunch)))) seconds" +'%H:%M')
-			estimate_after_lunch+="*"
 
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${estimate_after_lunch})" --parse_mode markdown
 
@@ -147,7 +145,7 @@ baterponto.saida() {
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	elif [[ ! -z $verify_segunda_entrada ]] && [[ -z $verify_segunda_saida ]]; then
 		message="Registrando a Segunda saída -> "
-		leave_day_sec="*$(date --date="now" +%s)*"
+		leave_day_sec="$(date --date="now" +%s)"
 		reply_user=$(date --date="now" +'%H:%M')
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} *${reply_user}*)" --parse_mode markdown
 
@@ -162,7 +160,7 @@ baterponto.saida() {
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 		else
 			message="Registrando a saída -> "
-			leave_day_sec="*$(date --date="now" +%s)*"
+			leave_day_sec="$(date --date="now" +%s)"
 			reply_user=$(date --date="now" +'%H:%M')
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message} *${reply_user}*)" --parse_mode markdown
 
