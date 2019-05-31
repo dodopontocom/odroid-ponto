@@ -258,3 +258,11 @@ baterponto.lunchAlert() {
 	fi
 
 }
+#below function: in case user does not make properly day closure it will assume 8 hours for the day
+baterponto.fixDay() {
+	#todo
+}
+
+
+
+
