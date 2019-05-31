@@ -260,7 +260,7 @@ baterponto.lunchAlert() {
 }
 #below function: in case user does not make properly day closure it will assume 8 hours for the day
 baterponto.fixDay() {
-	local work_day_start_sec reply_user estimate log file message flag flag2 weekday day verify verify_saida
+	local log file message weekday day verify fixday
 	weekday=$(convert.weekdayPtbr $(date +%u))
 	day=$(date +%Y%m%d)
 	file=${day}.csv
@@ -268,6 +268,8 @@ baterponto.fixDay() {
 	verify=$(tail -1 $log/$file | grep $day | cut -d',' -f4)
 	if [[ $verify == "entrada" ]] || [[ $verify == "volta" ]]; then
 		nao bateu certo a saida
+		fixday=$(($(tail -1 $log/$file | grep $day | cut -d',' -f3)+eight_hours_in_seconds))
+		fixday=
 	fi
 	if [[ -z $verify ]]; then
 		falta do dia
