@@ -36,8 +36,9 @@ btn_opcoes='
 ["Entrada ⌛"],
 ["Almoço 🍔", "Volta Almoço ☕"],
 ["Saída 🙏"],
-["Ajuda ⁉️", "Conf ⚙", "Editar 💾"]
+["Ajuda ⁉️", "Editar 💾"]
 '
+#["Ajuda ⁉️", "Conf ⚙", "Editar 💾"]
 
 ch_keyboard1="$(ShellBot.ReplyKeyboardMarkup --button 'btn_opcoes' --one_time_keyboard true)"
 
@@ -95,6 +96,8 @@ do
 		if [[ ${message_entities_type[$id]} == bot_command ]]; then
 			if [[ "$(echo ${message_text[$id]%%@*} | grep "^\/start" )" ]]; then
 				start.sendGreetings
+				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Comece me enviando um `oi`" \
+									--parse_mode markdown
 			fi
 		else
 			case ${message_text[$id]} in
@@ -106,7 +109,9 @@ do
 					;;
 				"Saída 🙏") baterponto.saida
 					;;
-				"Ajuda ⁉️")	 ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
+				"Ajuda ⁉️")	 start.sendGreetings
+							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Comece me enviando um \"Oi\"" \
+												--parse_mode markdown
 					;;
 				"Conf ⚙")
 							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "*Edite as Configurações*" \
