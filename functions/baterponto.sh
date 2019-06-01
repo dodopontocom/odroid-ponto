@@ -174,6 +174,7 @@ baterponto.saida() {
 		message="Resumo do dia\n"
 		message+=$(cat $log/$file | awk -F',' '{print $5 " às " "*"$4"*""\\n"}')
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+		
 	fi
 }
 
@@ -186,10 +187,11 @@ baterponto.calc() {
 				leave_day_sec=$(cat $file | grep ,saida | cut -d',' -f3)
 				first_time_sum=$(echo $(((leave_day_sec-work_day_start_sec))))
 				time_spent_at_work=$(echo $(date -d "00:00 today + $first_time_sum seconds" +'%H:%M'))
-
+				
 				message="Tempo gasto hoje no trabalho -> "
 				message+="*$time_spent_at_work*"
 				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+				baterponto.daySendResumo "$file" ",,,,$time_spent_at_work"
 			;;
 		'4' ) 	work_day_start_sec=$(cat $file | grep ,entrada | cut -d',' -f3)
 				go_lunch_sec=$(cat $file | grep ,almoco | cut -d',' -f3)
@@ -203,7 +205,7 @@ baterponto.calc() {
 				message="Tempo gasto hoje no trabalho -> "
 				message+="*$time_spent_at_work*"
 				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
-				
+				baterponto.daySendResumo "$file" ",,$time_spent_at_work"
 			;;
 		'6' )	go_lunch_sec=$(cat $file | grep ,almoco | cut -d',' -f3)
 				work_day_start_sec=$(cat $file | grep ,entrada | cut -d',' -f3)
@@ -219,10 +221,11 @@ baterponto.calc() {
 				day_closure2=$(echo $(((second_saida-second_entry)+second_time_sum)))
 				day_closure3=$(echo $((day_closure1+day_closure2)))
 				time_spent_at_work=$(echo $(date -d "00:00 today + $day_closure3 seconds" +'%H:%M'))
-
+				
 				message="Tempo gasto hoje no trabalho: "
 				message+="*$time_spent_at_work*"
 				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+				baterponto.daySendResumo "$file" "$time_spent_at_work"
 			;;
 		* )		message="*Error: Inesperado!*\n"
 				message+="Não foi possível calcular o tempo gasto hoje no trabalho."
@@ -276,6 +279,25 @@ baterponto.fixDay() {
 	fi
 }
 
+baterponto.daySendResumo() {
+	local header file lines hours dest_file total
+	file=$1
+	total=$2
+    dest_file=$file.resumo.csv
+	header="DATA, DIA SEMANA, ENTRADA, SAIDA ALMOCO, VOLTA ALMOCO, SAIDA, ENTRADA 2, SAIDA 2, TOTAL"
+	echo $header > $dest_file
+	
+	c=2
+	while read line; do
+        lines=$(head -1 $file | awk -F',' '{print $1","$2}')
+		lines+=$(head -$c $file | awk -F',' '{print ","$4}')
+		c=$((c+1))
+	done < $file
+	echo $total
+	echo $lines,$total >> $dest_file
+
+	ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$dest_file
+}
 
 
 
