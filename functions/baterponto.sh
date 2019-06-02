@@ -370,23 +370,27 @@ baterponto.daySendResumo() {
 	message="Estou enviando um resumo das suas horas..."
 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	
-	#baterponto.sendResumoAcumulativo $line_final $dest_file
-	ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$dest_file
+	baterponto.sendResumoAcumulativo "$line_final" "$dest_file"
 	
 	message="O arquivo \`'.csv'\` é compatível com Excel"
 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 }
 
 baterponto.sendResumoAcumulativo() {
-	local day line file yesterday
+	local day line file yesterday yesterday_file weekday
+	weekday=$(convert.weekdayPtbr $(date +%u))
 	line=$1
 	file=$2
 	day=$(date +%Y%m%d)
-	yesterday=$(date_arithmetic -1 | sed 's/-//g')
-	echo $yesterday
+	
+	yesterday=$(today_plus_days -1 | sed 's/-//g')
+	yesterday_file=$(echo $file | sed "s/$day"/$yesterday/)
 
-	#ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$file
+	if [[ $(cat $yesterday_file) ]]; then
+		echo "$(tail -1 $yesterday_file)" >> $file
+		ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$file
+	else
+		echo "$yesterday,---,FOLGA,FOLGA,FOLGA,FOLGA,FOLGA,FOLGA,FOLGA" >> $file
+		ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$file
+	fi
 }
-
-
-
