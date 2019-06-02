@@ -96,7 +96,7 @@ do
 		if [[ ${message_entities_type[$id]} == bot_command ]]; then
 			if [[ "$(echo ${message_text[$id]%%@*} | grep "^\/start" )" ]]; then
 				start.sendGreetings
-				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Comece me enviando um `oi`" \
+				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Comece me enviando um \`Oi\`" \
 									--parse_mode markdown
 			fi
 		else
@@ -110,7 +110,7 @@ do
 				"Saída 🙏") baterponto.saida
 					;;
 				"Ajuda ⁉️")	 start.sendGreetings
-							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Comece me enviando um \"Oi\"" \
+							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Comece me enviando um \`Oi\`" \
 												--parse_mode markdown
 					;;
 				"Conf ⚙")

@@ -1,8 +1,11 @@
 #!/bin/bash
 #
+
 source ${BASEDIR}/functions/iscreated.sh
 source ${BASEDIR}/functions/random.sh
 source ${BASEDIR}/functions/convert-weekday.sh
+source ${BASEDIR}/functions/date_arithmetic.sh
+
 #1 hour -> 1x60x60 seconds
 #8 hours > 8x60x60 seconds
 eight_hours_in_seconds=28800
@@ -367,11 +370,22 @@ baterponto.daySendResumo() {
 	message="Estou enviando um resumo das suas horas..."
 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	
-	#baterponto.sendResumoAcumulativo $line_final
+	#baterponto.sendResumoAcumulativo $line_final $dest_file
 	ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$dest_file
 	
 	message="O arquivo \`'.csv'\` é compatível com Excel"
 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+}
+
+baterponto.sendResumoAcumulativo() {
+	local day line file yesterday
+	line=$1
+	file=$2
+	day=$(date +%Y%m%d)
+	yesterday=$(date_arithmetic -1 | sed 's/-//g')
+	echo $yesterday
+
+	#ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$file
 }
 
 
