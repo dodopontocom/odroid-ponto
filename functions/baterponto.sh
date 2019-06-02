@@ -183,13 +183,15 @@ baterponto.saida() {
 			echo "$day,$weekday,$leave_day_sec,$reply_user,$flag" >> $log/$file
 		fi
 	fi
+
 	send_summary=$(cat $log/$file | grep $day | grep ,$flag)
 	send_summary2=$(cat $log/$file | grep $day | grep ,$flag2)
+	
 	if [[ ! -z $send_summary ]] || [[ ! -z $send_summary2 ]]; then
 		baterponto.calc "$log/$file"
-		message="Resumo do dia\n"
-		message+=$(cat $log/$file | awk -F',' '{print $5 " às " "*"$4"*""\\n"}')
-		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+		#message="Resumo do dia\n"
+		#message+=$(cat $log/$file | awk -F',' '{print $5 " às " "*"$4"*""\\n"}')
+		#ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 		
 	fi
 }
@@ -296,23 +298,71 @@ baterponto.fixDay() {
 }
 
 baterponto.daySendResumo() {
-	local header file lines hours dest_file total
+	local header file lines hours dest_file total message day check_almoco check_saida2
 	file=$1
 	total=$2
     dest_file=$file.resumo.csv
+	day=$(date +%Y%m%d)
 	header="DATA, DIA SEMANA, ENTRADA, SAIDA ALMOCO, VOLTA ALMOCO, SAIDA, ENTRADA 2, SAIDA 2, TOTAL"
 	echo $header > $dest_file
 	
-	c=2
-	while read line; do
-        lines=$(head -1 $file | awk -F',' '{print $1","$2}')
-		lines+=$(head -$c $file | awk -F',' '{print ","$4}')
-		c=$((c+1))
-	done < $file
-	echo $total
-	echo $lines,$total >> $dest_file
+	check_almoco=$(cat $file | grep $day | grep ,almoco)
+	check_saida2=$(cat $file | grep $day | grep ,2saida)
 
+
+	if [[ ! -z $check_almoco ]] && [[ -z $check_saida2 ]]; then
+		c=2
+		while read line; do
+			lines=$(head -1 $file | awk -F',' '{print $1","$2}')
+			lines+=$(head -$c $file | awk -F',' '{print ","$4}')
+			c=$((c+1))
+		done < $file
+		echo $total
+		echo $lines,$total >> $dest_file
+	elif [[ ! -z $check_almoco ]] && [[ ! -z $check_saida2 ]]; then
+		c=2
+		while read line; do
+			lines=$(head -1 $file | awk -F',' '{print $1","$2}')
+			lines+=$(head -$c $file | awk -F',' '{print ","$4}')
+			c=$((c+1))
+		done < $file
+		total=${total//,/}
+		fixed_saida=$(echo $lines | awk -F',' '{print $1","$2","$3","$4","$5","$6","$7","$8}')
+		echo $fixed_saida,$total >> $dest_file
+	elif [[ -z $check_almoco ]] && [[ ! -z $check_saida2 ]]; then
+		c=2
+		while read line; do
+			lines=$(head -1 $file | awk -F',' '{print $1","$2}')
+			lines+=$(head -$c $file | awk -F',' '{print ","$4}')
+			echo $lines
+			c=$((c+1))
+		done < $file
+		total=${total//,/}
+		fixed_saida=$(echo $lines | awk -F',' '{print $1","$2","$3",,,"$4","$5","$6","$7}')
+		echo $fixed_saida
+		echo $fixed_saida$total >> $dest_file
+	else	
+		c=2
+		while read line; do
+			lines=$(head -1 $file | awk -F',' '{print $1","$2}')
+			lines+=$(head -$c $file | awk -F',' '{print ","$4}')
+			c=$((c+1))
+		done < $file
+		total=${total//,/}
+		fixed_saida=$(echo $lines | awk -F',' '{print $1","$2","$3",,,"$4}')
+		echo $fixed_saida,,,$total >> $dest_file
+		
+	fi
+	message="Estou enviando o resumo do dia..."
+	
+	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$dest_file
+	
+	message="O arquivo *'.csv'* é compatível com Excel\n"
+	message+="E, ao final da semana, enviarei um resumo completo semanal"
+	
+	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+	
 }
 
 
