@@ -298,7 +298,7 @@ baterponto.fixDay() {
 }
 
 baterponto.daySendResumo() {
-	local header file lines hours dest_file total message day check_almoco check_saida2
+	local header file lines hours dest_file total message day check_almoco check_saida2 line_final
 	file=$1
 	total=$2
     dest_file=$file.resumo.csv
@@ -317,8 +317,10 @@ baterponto.daySendResumo() {
 			lines+=$(head -$c $file | awk -F',' '{print ","$4}')
 			c=$((c+1))
 		done < $file
-		echo $total
-		echo $lines,$total >> $dest_file
+		
+		line_final=$lines,$total
+		echo $line_final >> $dest_file
+
 	elif [[ ! -z $check_almoco ]] && [[ ! -z $check_saida2 ]]; then
 		c=2
 		while read line; do
@@ -326,21 +328,27 @@ baterponto.daySendResumo() {
 			lines+=$(head -$c $file | awk -F',' '{print ","$4}')
 			c=$((c+1))
 		done < $file
+		
 		total=${total//,/}
 		fixed_saida=$(echo $lines | awk -F',' '{print $1","$2","$3","$4","$5","$6","$7","$8}')
-		echo $fixed_saida,$total >> $dest_file
+
+		line_final=$fixed_saida,$total
+		echo $line_final >> $dest_file
+
 	elif [[ -z $check_almoco ]] && [[ ! -z $check_saida2 ]]; then
 		c=2
 		while read line; do
 			lines=$(head -1 $file | awk -F',' '{print $1","$2}')
 			lines+=$(head -$c $file | awk -F',' '{print ","$4}')
-			echo $lines
 			c=$((c+1))
 		done < $file
+
 		total=${total//,/}
 		fixed_saida=$(echo $lines | awk -F',' '{print $1","$2","$3",,,"$4","$5","$6","$7}')
-		echo $fixed_saida
-		echo $fixed_saida$total >> $dest_file
+		
+		line_final=$fixed_saida$total
+		echo $line_final >> $dest_file
+
 	else	
 		c=2
 		while read line; do
@@ -348,21 +356,22 @@ baterponto.daySendResumo() {
 			lines+=$(head -$c $file | awk -F',' '{print ","$4}')
 			c=$((c+1))
 		done < $file
+		
 		total=${total//,/}
 		fixed_saida=$(echo $lines | awk -F',' '{print $1","$2","$3",,,"$4}')
-		echo $fixed_saida,,,$total >> $dest_file
+		
+		line_final=$fixed_saida,,,$total
+		echo $line_final >> $dest_file
 		
 	fi
-	message="Estou enviando o resumo do dia..."
-	
+	message="Estou enviando um resumo das suas horas..."
 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+	
+	#baterponto.sendResumoAcumulativo $line_final
 	ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$dest_file
 	
-	message="O arquivo *'.csv'* é compatível com Excel\n"
-	message+="E, ao final da semana, enviarei um resumo completo semanal"
-	
+	message="O arquivo \`'.csv'\` é compatível com Excel"
 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
-	
 }
 
 
