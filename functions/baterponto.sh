@@ -149,6 +149,7 @@ baterponto.saida() {
 	verify_segunda_entrada=$(cat $log/$file | grep $day | grep ,2entrada | cut -d',' -f4)
 	verify_segunda_saida=$(cat $log/$file | grep $day | grep ,2saida | cut -d',' -f4)
 	verify_volta=$(cat $log/$file | grep $day | grep ,volta | cut -d',' -f4)
+	verify_almoco=$(cat $log/$file | grep $day | grep ,almoco | cut -d',' -f4)
 
 	if [[ ! -f $log/$file ]] && [[ -z $verify_segunda_entrada ]]; then
 		message="Entrada ainda não registrada.\n"
@@ -164,7 +165,7 @@ baterponto.saida() {
 	elif [[ ! -z $verify_segunda_saida ]]; then
 		message="Segunda saída foi registrada às *${verify_segunda_saida}*"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
-	elif [[ -z $verify_volta ]]; then
+	elif [[ -z $verify_volta ]] && [[ ! -z $verify_almoco ]]; then
 		message="Aqui consta que você ainda não retornou do almoço\n"
 		message+="*Registre a volta do almoço primeiro*"
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
