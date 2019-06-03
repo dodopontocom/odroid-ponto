@@ -174,8 +174,8 @@ do
 
 		if [[ ${message_reply_to_message_message_id[$id]} ]]; then
 			case ${message_reply_to_message_text[$id]} in
-				'Novo Horário:') echo ${message_reply_to_message_message_id[$id]}
-					echo ${message_reply_to_message_text[$id]}
+				'Novo Horário:') echo ${message_reply_to_message_text[$id]}
+					echo ${message_text[$id]}
 				;;
 				*) echo sair
 				;;
