@@ -27,14 +27,12 @@ ShellBot.init --token "$bot_token" --monitor --flush
 
 ShellBot.ReplyKeyboardRemove
 
-btn_config='
-["Alertas ->", "30min", "*15min", "5min"],
-["Resumos ->", "Dia", "Semana", "Mês"],
-["Período Diário ->", "*8Hs", "7Hs", "6Hs"],
-["Ajuda ⁉️", "Conf ⚙", "Editar 💾"]
+btn_edit='
+["<- Entrada ->", "<- Saída ->"],
+["<- Almoço ->", "<- Volta Almoço ->"],
+["<- Voltar"]
 '
-
-config_keyboard1="$(ShellBot.ReplyKeyboardMarkup --button 'btn_config' --one_time_keyboard true)"
+edit_keyboard1="$(ShellBot.ReplyKeyboardMarkup --button 'btn_edit' --one_time_keyboard true)"
 
 btn_opcoes='
 ["Entrada ⌛"],
@@ -42,8 +40,6 @@ btn_opcoes='
 ["Saída 🙏"],
 ["Ajuda ⁉️", "Editar 💾"]
 '
-#["Ajuda ⁉️", "Conf ⚙", "Editar 💾"]
-
 ch_keyboard1="$(ShellBot.ReplyKeyboardMarkup --button 'btn_opcoes' --one_time_keyboard true)"
 
 #######################################################################################
@@ -122,12 +118,20 @@ do
 							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Comece me enviando um \`Oi\`" \
 												--parse_mode markdown
 					;;
-				"Conf ⚙")
-							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "*Edite as Configurações*" \
-									--reply_markup "$config_keyboard1" --parse_mode markdown
+				"Editar 💾")	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "*Edite os Registros*" \
+									--reply_markup "$edit_keyboard1" --parse_mode markdown
 							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
 					;;
-				"Editar 💾") ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
+				"<- Entrada ->") baterponto.edit "${message_from_id[$id]}"
+					;;
+				"<- Almoço ->") baterponto.edit "${message_from_id[$id]}"
+					;;
+				"<- Volta Almoço ->") baterponto.edit "${message_from_id[$id]}"
+					;;
+				"<- Saída ->") baterponto.edit "${message_from_id[$id]}"
+					;;
+				"<- Voltar")	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "*Marcar Ponto*" \
+									--reply_markup "$ch_keyboard1" --parse_mode markdown
 					;;
 				*)  
 					ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "*Marcar Ponto*" \

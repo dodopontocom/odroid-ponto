@@ -394,3 +394,19 @@ baterponto.sendResumoAcumulativo() {
 		ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$file
 	fi
 }
+
+baterponto.edit() {
+	local user_id day logs message
+	user_id=$1
+	day=$(date +%Y%m%d)
+	logs=$BASEDIR/logs/$user_id/$day.csv
+	
+	if [[ $(ls $logs) ]]; then
+		message="Funcionalidade de Edição"
+		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+	else
+		message="Não houve registro no dia de hoje. Registre a entrada."
+		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+
+	fi
+}
