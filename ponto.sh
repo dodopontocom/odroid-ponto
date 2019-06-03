@@ -71,6 +71,37 @@ ShellBot.InlineKeyboardButton --button 'botao2' --line 7 --text 'Listar Outros �
 #ShellBot.regHandleFunction --function list.search --callback_data btn_trip_outrosX
 keyboard_trip_checklist="$(ShellBot.InlineKeyboardMarkup -b 'botao2')"
 #######################################################################################
+#######################################################################################
+edit.registros() {
+	local user_id day logs message flag
+	user_id=$1
+	flag=$2
+	day=$(date +%Y%m%d)
+	logs=$BASEDIR/logs/$user_id/$day.csv
+	
+	if [[ $(ls $logs) ]]; then
+		if [[ $(cat $logs | grep ,$flag) ]]; then
+			message="Editar registro já existente"
+			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+			message="A *$flag* foi registrada às "
+			message+="*$(cat $logs | grep ,$flag | cut -d',' -f4)*"
+			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+
+			ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
+						--text "Novo Horário:" \
+						--reply_markup "$(ShellBot.ForceReply)"
+		else
+			message="Editar registro que ainda não foi registrado. Bom para marcar registros atrasados"
+			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+
+		fi
+	else
+		message="Não houve registro no dia de hoje. Registre a entrada."
+		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+
+	fi
+}
+#######################################################################################
 
 while :
 do
@@ -122,13 +153,13 @@ do
 									--reply_markup "$edit_keyboard1" --parse_mode markdown
 							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
 					;;
-				"<- Entrada ->") baterponto.edit "${message_from_id[$id]}" "entrada"
+				"<- Entrada ->") edit.registros "${message_from_id[$id]}" "entrada"
 					;;
-				"<- Almoço ->") baterponto.edit "${message_from_id[$id]}" "almoco"
+				"<- Almoço ->") edit.registros "${message_from_id[$id]}" "almoco"
 					;;
-				"<- Volta Almoço ->") baterponto.edit "${message_from_id[$id]}" "volta"
+				"<- Volta Almoço ->") edit.registros "${message_from_id[$id]}" "volta"
 					;;
-				"<- Saída ->") baterponto.edit "${message_from_id[$id]}" "saida"
+				"<- Saída ->") edit.registros "${message_from_id[$id]}" "saida"
 					;;
 				"<- Voltar")	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "*Marcar Ponto*" \
 									--reply_markup "$ch_keyboard1" --parse_mode markdown
@@ -142,7 +173,12 @@ do
 		fi
 
 		if [[ ${message_reply_to_message_message_id[$id]} ]]; then
-			echo ${message_text[$id]}
+			case ${message_reply_to_message_text[$id]} in
+				'Novo Horário:') echo novo
+				;;
+				*) echo sair
+				;;
+			esac
 		fi
 
 	) & 
