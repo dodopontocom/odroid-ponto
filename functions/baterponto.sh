@@ -372,7 +372,7 @@ baterponto.daySendResumo() {
 	
 	baterponto.sendResumoAcumulativo "$line_final" "$dest_file"
 	
-	message="O arquivo \`'.csv'\` é compatível com Excel"
+	message="O arquivo \`'.csv'\` é compatível com Ms Excel"
 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 }
 
