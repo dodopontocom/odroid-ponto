@@ -396,14 +396,28 @@ baterponto.sendResumoAcumulativo() {
 }
 
 baterponto.edit() {
-	local user_id day logs message
+	local user_id day logs message flag
 	user_id=$1
+	flag=$2
 	day=$(date +%Y%m%d)
 	logs=$BASEDIR/logs/$user_id/$day.csv
 	
 	if [[ $(ls $logs) ]]; then
-		message="Funcionalidade de Edição"
-		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+		if [[ $(cat $logs | grep ,$flag) ]]; then
+			message="Editar registro já existente"
+			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+			message="A *$flag* foi registrada às "
+			message+="*$(cat $logs | grep ,$flag | cut -d',' -f4)*"
+			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+
+			ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
+						--text "Novo Horário:" \
+						--reply_markup "$(ShellBot.ForceReply)"
+		else
+			message="Editar registro que ainda não foi registrado. Bom para marcar registros atrasados"
+			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+
+		fi
 	else
 		message="Não houve registro no dia de hoje. Registre a entrada."
 		ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown

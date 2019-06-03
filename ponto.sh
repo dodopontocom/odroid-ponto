@@ -92,7 +92,7 @@ do
 	do
 	(
 		ShellBot.watchHandle --callback_data ${callback_query_data[$id]}
-		
+					
 		if [[ ${message_entities_type[$id]} == bot_command ]]; then
 			if [[ "$(echo ${message_text[$id]%%@*} | grep "^\/start" )" ]]; then
 				
@@ -122,13 +122,13 @@ do
 									--reply_markup "$edit_keyboard1" --parse_mode markdown
 							ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Em Construção 🚷" --parse_mode markdown
 					;;
-				"<- Entrada ->") baterponto.edit "${message_from_id[$id]}"
+				"<- Entrada ->") baterponto.edit "${message_from_id[$id]}" "entrada"
 					;;
-				"<- Almoço ->") baterponto.edit "${message_from_id[$id]}"
+				"<- Almoço ->") baterponto.edit "${message_from_id[$id]}" "almoco"
 					;;
-				"<- Volta Almoço ->") baterponto.edit "${message_from_id[$id]}"
+				"<- Volta Almoço ->") baterponto.edit "${message_from_id[$id]}" "volta"
 					;;
-				"<- Saída ->") baterponto.edit "${message_from_id[$id]}"
+				"<- Saída ->") baterponto.edit "${message_from_id[$id]}" "saida"
 					;;
 				"<- Voltar")	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "*Marcar Ponto*" \
 									--reply_markup "$ch_keyboard1" --parse_mode markdown
@@ -140,6 +140,11 @@ do
 
 			esac
 		fi
+
+		if [[ ${message_reply_to_message_message_id[$id]} ]]; then
+			echo ${message_text[$id]}
+		fi
+
 	) & 
 	done
 done
