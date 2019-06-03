@@ -88,7 +88,7 @@ edit.registros() {
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 
 			ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
-						--text "Novo Horário:" \
+						--text "Novo Horário - $flag:" \
 						--reply_markup "$(ShellBot.ForceReply)"
 		else
 			message="Editar registro que ainda não foi registrado. Bom para marcar registros atrasados"
@@ -155,7 +155,7 @@ do
 					;;
 				"<- Entrada ->") edit.registros "${message_from_id[$id]}" "entrada"
 					;;
-				"<- Almoço ->") edit.registros "${message_from_id[$id]}" "almoco"
+				"<- Almoço ->") edit.registros "${message_from_id[$id]}" "almoço"
 					;;
 				"<- Volta Almoço ->") edit.registros "${message_from_id[$id]}" "volta"
 					;;
@@ -174,8 +174,13 @@ do
 
 		if [[ ${message_reply_to_message_message_id[$id]} ]]; then
 			case ${message_reply_to_message_text[$id]} in
-				'Novo Horário:') echo ${message_reply_to_message_text[$id]}
-					echo ${message_text[$id]}
+				'Novo Horário - entrada:') baterponto.edit "${message_from_id[$id]}" "entrada" "${message_text[$id]}"
+				;;
+				'Novo Horário - aaida:') baterponto.edit "${message_from_id[$id]}" "saida" "${message_text[$id]}"
+				;;
+				'Novo Horário - almoco:') baterponto.edit "${message_from_id[$id]}" "almoco" "${message_text[$id]}"
+				;;
+				'Novo Horário - volta:') baterponto.edit "${message_from_id[$id]}" "volta" "${message_text[$id]}"
 				;;
 				*) echo sair
 				;;

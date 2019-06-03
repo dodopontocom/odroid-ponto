@@ -396,23 +396,27 @@ baterponto.sendResumoAcumulativo() {
 }
 
 baterponto.edit() {
-	local user_id day logs message flag
+	local user_id day logs message flag horario change_time
 	user_id=$1
 	flag=$2
+	horario=$3
 	day=$(date +%Y%m%d)
 	logs=$BASEDIR/logs/$user_id/$day.csv
 	
 	if [[ $(ls $logs) ]]; then
 		if [[ $(cat $logs | grep ,$flag) ]]; then
-			message="Editar registro já existente"
-			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
-			message="A *$flag* foi registrada às "
-			message+="*$(cat $logs | grep ,$flag | cut -d',' -f4)*"
-			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+			if [[ "$horario" =~ [0-2][0-9]\:[0-5][0-9] ]]; then
+				change_time=$(cat $logs | grep $day | grep ,$flag | cut -d',' -f4)
+				message=$(cat $logs | sed "s/$change_time"/$horario/)
+				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+			else
+				message="Horário não é válido. Clique em editar novamente\n"
+				message+="Exemplo de horários válidos: 12:33 - 23:59 - 09:00\n"
+				message+="Exemplo de horários inválidos: 32:00 - 24:00 - 9:00"
+				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+			fi
 
-			ShellBot.sendMessage --chat_id ${message_from_id[$id]} \
-						--text "Novo Horário:" \
-						--reply_markup "$(ShellBot.ForceReply)"
+
 		else
 			message="Editar registro que ainda não foi registrado. Bom para marcar registros atrasados"
 			ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
