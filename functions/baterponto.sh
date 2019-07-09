@@ -296,7 +296,7 @@ baterponto.fixDay() {
 		fixday=
 	fi
 	if [[ -z $verify ]]; then
-		falta do dia
+		#falta do dia
 	fi
 }
 
