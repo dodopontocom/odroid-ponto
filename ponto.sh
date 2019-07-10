@@ -18,6 +18,10 @@ logs=${BASEDIR}/logs
 # Token do bot
 bot_token=$(cat ${BASEDIR}/.token)
 
+VERSION=$(cd $BASEDIR ; git branch | grep -E "\*" ; cd -)
+BT_VERSION=${VERSION:2}
+echo "----------------------------- $BT_VERSION"
+
 # Inicializando o bot
 ShellBot.init --token "$bot_token" --monitor --flush
 
@@ -95,7 +99,12 @@ do
 		
 		if [[ ${message_entities_type[$id]} == bot_command ]]; then
 			if [[ "$(echo ${message_text[$id]%%@*} | grep "^\/start" )" ]]; then
+				
+				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "\`(versão beta: $(echo $BT_VERSION))\`" \
+									--parse_mode markdown
+				
 				start.sendGreetings
+				
 				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Comece me enviando um \`Oi\`" \
 									--parse_mode markdown
 			fi

@@ -1,5 +1,5 @@
-Eu sou o 🤖 `BOT baterponto`.\n
-*Posso gerenciar as suas horas de trabalho.*\n
+Eu sou o 🤖 `BOT` *baterponto*.\n
+Posso gerenciar as suas horas de trabalho.\n
 Basta conversar comigo e te envio os botões para começar...👇 👌\n\n
 *->* `Entrada ⌛` \n\n
 *->* `Almoço 🍔` \n\n
@@ -7,4 +7,6 @@ Basta conversar comigo e te envio os botões para começar...👇 👌\n\n
 *->* `Saída 🙏` \n\n
 *->* `Entrada 2 - opcional` \n\n
 *->* `Saída 2 - opcional` \n\n
-*Você pode realizar até 2 entradas e 2 saídas ao longo do dia.*\n
+*Você pode realizar até 2 entradas e 2 saídas ao longo do dia.*\n\n
+*E no final do dia te envio uma planilha para seu controle!*\n\n
+feedback -> @rodolfotiago

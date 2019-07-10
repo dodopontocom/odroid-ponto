@@ -207,7 +207,7 @@ baterponto.calc() {
 		'2' )	work_day_start_sec=$(cat $file | grep ,entrada | cut -d',' -f3)
 				leave_day_sec=$(cat $file | grep ,saida | cut -d',' -f3)
 				first_time_sum=$(echo $(((leave_day_sec-work_day_start_sec))))
-				time_spent_at_work=$(echo $(date -d "00:00 today + $first_time_sum seconds" +'%H:%M'))
+				time_spent_at_work=$(echo $(date -d "00:00:00 today + $first_time_sum seconds" +'%H:%M:%S'))
 				
 				message="Tempo gasto hoje no trabalho -> "
 				message+="*$time_spent_at_work*"
@@ -221,7 +221,7 @@ baterponto.calc() {
 
 				first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
 				day_closure=$(echo $(((leave_day_sec-back_lunch_sec)+first_time_sum)))
-				time_spent_at_work=$(echo $(date -d "00:00 today + $day_closure seconds" +'%H:%M'))
+				time_spent_at_work=$(echo $(date -d "00:00:00 today + $day_closure seconds" +'%H:%M:%S'))
 
 				message="Tempo gasto hoje no trabalho -> "
 				message+="*$time_spent_at_work*"
@@ -241,7 +241,7 @@ baterponto.calc() {
 
 				day_closure2=$(echo $(((second_saida-second_entry)+second_time_sum)))
 				day_closure3=$(echo $((day_closure1+day_closure2)))
-				time_spent_at_work=$(echo $(date -d "00:00 today + $day_closure3 seconds" +'%H:%M'))
+				time_spent_at_work=$(echo $(date -d "00:00:00 today + $day_closure3 seconds" +'%H:%M:%S'))
 				
 				message="Tempo gasto hoje no trabalho: "
 				message+="*$time_spent_at_work*"
@@ -296,7 +296,7 @@ baterponto.fixDay() {
 		fixday=
 	fi
 	if [[ -z $verify ]]; then
-		falta do dia
+		#falta do dia
 	fi
 }
 
@@ -370,23 +370,27 @@ baterponto.daySendResumo() {
 	message="Estou enviando um resumo das suas horas..."
 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 	
-	#baterponto.sendResumoAcumulativo $line_final $dest_file
-	ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$dest_file
+	baterponto.sendResumoAcumulativo "$line_final" "$dest_file"
 	
-	message="O arquivo \`'.csv'\` é compatível com Excel"
+	message="O arquivo \`'.csv'\` é compatível com Ms Excel"
 	ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 }
 
 baterponto.sendResumoAcumulativo() {
-	local day line file yesterday
+	local day line file yesterday yesterday_file weekday
+	weekday=$(convert.weekdayPtbr $(date +%u))
 	line=$1
 	file=$2
 	day=$(date +%Y%m%d)
-	yesterday=$(date_arithmetic -1 | sed 's/-//g')
-	echo $yesterday
+	
+	yesterday=$(today_plus_days -1 | sed 's/-//g')
+	yesterday_file=$(echo $file | sed "s/$day"/$yesterday/)
 
-	#ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$file
+	if [[ $(cat $yesterday_file) ]]; then
+		echo "$(tail -1 $yesterday_file)" >> $file
+		ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$file
+	else
+		echo "$yesterday,---,FOLGA,FOLGA,FOLGA,FOLGA,FOLGA,FOLGA,FOLGA" >> $file
+		ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$file
+	fi
 }
-
-
-

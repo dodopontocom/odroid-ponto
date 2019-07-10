@@ -1,5 +1,6 @@
 #!/bin/sh
 # shell date arithmetic
+#credits https://gist.github.com/alvfig/f04130aef28e30f96b6bb63a5b81ba80
 
 secs()
 {
