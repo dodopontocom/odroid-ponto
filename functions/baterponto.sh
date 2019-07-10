@@ -207,7 +207,7 @@ baterponto.calc() {
 		'2' )	work_day_start_sec=$(cat $file | grep ,entrada | cut -d',' -f3)
 				leave_day_sec=$(cat $file | grep ,saida | cut -d',' -f3)
 				first_time_sum=$(echo $(((leave_day_sec-work_day_start_sec))))
-				time_spent_at_work=$(echo $(date -d "00:00 today + $first_time_sum seconds" +'%H:%M'))
+				time_spent_at_work=$(echo $(date -d "00:00:00 today + $first_time_sum seconds" +'%H:%M:%S'))
 				
 				message="Tempo gasto hoje no trabalho -> "
 				message+="*$time_spent_at_work*"
@@ -221,7 +221,7 @@ baterponto.calc() {
 
 				first_time_sum=$(echo $(((go_lunch_sec-work_day_start_sec))))
 				day_closure=$(echo $(((leave_day_sec-back_lunch_sec)+first_time_sum)))
-				time_spent_at_work=$(echo $(date -d "00:00 today + $day_closure seconds" +'%H:%M'))
+				time_spent_at_work=$(echo $(date -d "00:00:00 today + $day_closure seconds" +'%H:%M:%S'))
 
 				message="Tempo gasto hoje no trabalho -> "
 				message+="*$time_spent_at_work*"
@@ -241,7 +241,7 @@ baterponto.calc() {
 
 				day_closure2=$(echo $(((second_saida-second_entry)+second_time_sum)))
 				day_closure3=$(echo $((day_closure1+day_closure2)))
-				time_spent_at_work=$(echo $(date -d "00:00 today + $day_closure3 seconds" +'%H:%M'))
+				time_spent_at_work=$(echo $(date -d "00:00:00 today + $day_closure3 seconds" +'%H:%M:%S'))
 				
 				message="Tempo gasto hoje no trabalho: "
 				message+="*$time_spent_at_work*"
