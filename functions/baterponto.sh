@@ -387,7 +387,7 @@ baterponto.sendResumoAcumulativo() {
 	yesterday_file=$(echo $file | sed "s/$day"/$yesterday/)
 
 	if [[ $(cat $yesterday_file) ]]; then
-		echo "$(tail -1 $yesterday_file)" >> $file
+		echo "$(cat $yesterday_file)" >> $file
 		ShellBot.sendDocument --chat_id ${message_chat_id[$id]} --document @$file
 	else
 		echo "$yesterday,---,FOLGA,FOLGA,FOLGA,FOLGA,FOLGA,FOLGA,FOLGA" >> $file
