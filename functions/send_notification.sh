@@ -14,7 +14,7 @@ avisos.on() {
     ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
   else
     mkdir ${log}/avisos.alert
-    message="Lembretes On"
+    message="Agora enviarei avisos amigáveis sem ser chato 🙃 . Para desligar é só enviar /avisoOff"
     ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
   fi
 }
