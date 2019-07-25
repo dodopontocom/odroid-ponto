@@ -85,14 +85,10 @@ do
 			fi
 			if [[ "$(echo ${message_text[$id]%%@*} | grep "^\/avisos" )" ]]; then
 				
-				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Agora enviarei avisos amigáveis sem ser chato 🙃 . Para desligar é só enviar /avisoOff" \
-									--parse_mode markdown
 				avisos.on
 			fi
 			if [[ "$(echo ${message_text[$id]%%@*} | grep "^\/avisoOff" )" ]]; then
 				
-				ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "Yes, aviso off 🙃 . Para ligar novamente é só enviar /avisos" \
-									--parse_mode markdown
 				avisos.off
 			fi
 		else
