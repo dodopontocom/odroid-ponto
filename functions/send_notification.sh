@@ -7,22 +7,30 @@ avisos.on() {
   local message log
   
   log=${BASEDIR}/logs/${message_from_id}
-  message="avisos on"
   
-  mkdir ${log}/avisos.alert
   
-  ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+  if [[ -f ${log}/avisos.alert ]]; then
+    message="Lembretes já ativados, caso queira desligar /avisoOff"
+    ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+  else
+    mkdir ${log}/avisos.alert
+    message="Lembretes On"
+    ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+  fi
 }
 
 avisos.off() {
   local message log
   
   log=${BASEDIR}/logs/${message_from_id}
-  message="avisos off"
-  
-  rm -fv ${log}/avisos.alert
-  
-  ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+  if [[ ! -f ${log}/avisos.alert ]]; then
+    message="Lembretes não estão ativados, caso queira ligar /avisos"
+    ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+  else
+    rm -vf ${log}/avisos.alert
+    message="Lembretes Off"
+    ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
+  fi
 }
 
 avisos.send() {
@@ -30,7 +38,7 @@ avisos.send() {
   
   message="Olá , tudo bem?\n"
   message+="Passando por aqui para perguntar se você lembrou de bater o ponto hoje!? 🤔\n"
-  message+="Caso não queira mais avisos /avisosOff"
+  message+="Caso não queira mais avisos /avisoOff"
 
   ShellBot.sendMessage --chat_id ${message_chat_id[$id]} --text "$(echo -e ${message})" --parse_mode markdown
 }
