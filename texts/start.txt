@@ -7,6 +7,7 @@ Basta conversar comigo e te envio os botões para começar...👇 👌\n\n
 *->* `Saída 🙏` \n\n
 *->* `Entrada 2 - opcional` \n\n
 *->* `Saída 2 - opcional` \n\n
-*Você pode realizar até 2 entradas e 2 saídas ao longo do dia.*\n\n
+*Você pode realizar até 2 entradas e 2 saídas ao longo do dia.*\n
 *E no final do dia te envio uma planilha para seu controle!*\n\n
+Você pode ligar o comando /avisos para receber lembretes e não esquecer de bater o ponto diariamente!\n\n
 feedback -> @rodolfotiago
