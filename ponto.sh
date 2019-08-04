@@ -24,6 +24,9 @@ BT_VERSION=${VERSION:2}
 
 # Inicializando o bot
 ShellBot.init --token "$bot_token" --monitor --flush
+my_id=11504381
+message="Fui reiniciado"
+ShellBot.sendMessage --chat_id $my_id --text "$(echo -e ${message})"
 
 ShellBot.ReplyKeyboardRemove
 
