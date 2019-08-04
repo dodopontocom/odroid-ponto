@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#sleep 10
+sleep 16
 
 # Importando API
 BASEDIR=$(dirname $0)
